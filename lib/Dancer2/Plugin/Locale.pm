@@ -28,9 +28,8 @@ sub locale {
     }
 
     my $app = $dsl->app;
-
-    # TODO 2: request locale via browser/HTP req after session and before default?
-    return Dancer2::Plugin::Locale::Obj->get_handle( grep( { defined } ( eval { $app->session->read('locale') }, $dsl->config->{default_locale} ) ), 'en' );    # multiton already via Locale::Maketext::Utils
+    my ($brLang) = map {substr($_,0,2)} split (/,/,$app->request->env->{HTTP_ACCEPT_LANGUAGE});
+    return Dancer2::Plugin::Locale::Obj->get_handle( grep( { defined } ( eval { $app->session->read('locale') }, $brLang, $dsl->config->{default_locale} ) ),'en' );    # multiton already via Locale::Maketext::Utils
 }
 
 sub BUILD {
